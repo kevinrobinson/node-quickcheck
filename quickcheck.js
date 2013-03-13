@@ -52,18 +52,23 @@
 
   exports.arbString = arbString;
 
-  function forAll(property) {
+  function forAll(generators, properties) {
     var
-      generators = Array.prototype.slice.call(arguments, 1),
       fn = function (f) { return f(); },
       i,
+      j,
+      propertyLength,
+      property,
       values;
 
     for (i = 0; i < 100; i ++) {
       values = generators.map(fn);
 
-      if (!property.apply(null, values)) {
-        return { status: 'failed', values: values };
+      for (j = 0, propertyLength = properties.length; j < propertyLength; j++) {
+        property = properties[j];
+        if (!property.apply(null, values)) {
+          return { status: 'failed', property: property, values: values };
+        }
       }
     }
 
