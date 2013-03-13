@@ -63,49 +63,14 @@
       values = generators.map(fn);
 
       if (!property.apply(null, values)) {
-        console.log("*** Failed!\n" + values);
-        return;
+        return { status: 'failed', values: values };
       }
     }
 
-    console.log("+++ OK, passed 100 tests.");
+    return { status: 'passed', values: values };
   }
 
   exports.forAll = forAll;
-
-  function forAllSilent() {
-    console.oldLog = console.log;
-    console.log = function () {};
-
-    var result = forAll.apply(null, arguments);
-
-    console.log = console.oldLog;
-
-    return result;
-  }
-
-  exports.forAllSilent = forAllSilent;
-
-  // Test quickcheck itself
-  function test() {
-    var
-      propertyEven,
-      propertyNumber,
-      propertyTrue;
-
-    propertyEven = function (x) { return x % 2 === 0; };
-    console.assert(!forAllSilent(propertyEven, arbByte));
-
-    propertyNumber = function (x) { return typeof(x) === "number"; };
-    console.assert(forAllSilent(propertyNumber, arbInt));
-
-    propertyTrue = function (x) { return x; };
-    console.assert(!forAllSilent(propertyTrue, arbBool));
-
-    return true;
-  }
-
-  exports.test = test;
 
   return exports;
 })(window.qc = {});
